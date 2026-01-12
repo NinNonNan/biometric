@@ -98,6 +98,11 @@ def update_hr():
 
     return jsonify({"status": "ok"}), 200
 
+# Route per ottenere i dati correnti (AJAX)
+@app.route('/data')
+def get_data():
+    return jsonify(hr_data)
+
 # Route principale: mostra pagina HTML Pip-Boy con dati attuali
 @app.route('/')
 def index():
@@ -107,7 +112,7 @@ def index():
 <html>
 <head>
     <title>PIP-BOY BIOMETRICS</title>
-    <meta http-equiv="refresh" content="1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>♥</text></svg>">
     <style>
         body {{
@@ -122,13 +127,27 @@ def index():
         }}
         .screen {{
             position: relative;
-            width: 400px;
+            width: 90%;
+            max-width: 400px;
             background-color: #013d1a;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0,255,0,0.4) inset;
+            box-sizing: border-box;
             color: #0c0;
+            animation: colorPulse 5s infinite ease-in-out;
             overflow: hidden;
+        }}
+        .screen:before {{
+            animation: wave 10s infinite ease-in-out;
+            content: "";
+            height: 20%;
+            left: 0;
+            opacity: .5;
+            position: absolute;
+            right: 0;
+            z-index: 2;
+            pointer-events: none;
         }}
         .screen:after {{
             background-image: linear-gradient(transparent, transparent 3px, #022);
@@ -141,6 +160,27 @@ def index():
         }}
         @keyframes pulse {{
             from{{transform:scale(1)}} to{{transform:scale(1.3)}}
+        }}
+        @keyframes colorPulse {{
+            0%, 100% {{ color: #0c0; }}
+            48%, 52% {{ color: #090; }}
+            50% {{ color: #060; }}
+        }}
+        @keyframes wave {{
+            0% {{
+                box-shadow: 0 -20px 50px #0c0;
+                top: -100%;
+            }}
+            48%, 52% {{
+                box-shadow: 0 -20px 50px #090;
+            }}
+            50% {{
+                box-shadow: 0 -20px 50px #060;
+            }}
+            100% {{
+                box-shadow: 0 -20px 50px #0c0;
+                top: 200%;
+            }}
         }}
         .heart {{
             display:inline-block;
@@ -170,18 +210,41 @@ def index():
         }}
         .label {{ opacity:0.7; margin-right:5px; }}
     </style>
+    <script>
+        function fetchData() {{
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {{
+                    document.getElementById('hr').innerText = data.hr + ' BPM';
+                    
+                    const stateEl = document.getElementById('state');
+                    stateEl.innerText = data.state;
+                    if (data.state === 'CRITICAL') {{
+                        stateEl.classList.add('critical');
+                    }} else {{
+                        stateEl.classList.remove('critical');
+                    }}
+                    
+                    document.getElementById('avg').innerText = data.hr_avg;
+                    document.getElementById('delta').innerText = data.delta_hr;
+                    document.getElementById('stress').innerText = data.stress;
+                    document.getElementById('ts').innerText = data.ts;
+                }});
+        }}
+        setInterval(fetchData, 1000);
+    </script>
 </head>
 <body>
     <div class="screen">
         <div class="hr-box">
-            <span class="heart">♥</span><span>{hr_data["hr"]} BPM</span>
+            <span class="heart">♥</span><span id="hr">{hr_data["hr"]} BPM</span>
         </div>
-        <div class="state {critical_class}">{hr_data["state"]}</div>
+        <div id="state" class="state {critical_class}">{hr_data["state"]}</div>
         <div class="details">
-            <div><span class="label">AVG HR:</span>{hr_data["hr_avg"]}</div>
-            <div><span class="label">Δ HR:</span>{hr_data["delta_hr"]}</div>
-            <div><span class="label">STRESS IDX:</span>{hr_data["stress"]}</div>
-            <div><span class="label">TIME:</span>{hr_data["ts"]}</div>
+            <div><span class="label">AVG HR:</span><span id="avg">{hr_data["hr_avg"]}</span></div>
+            <div><span class="label">Δ HR:</span><span id="delta">{hr_data["delta_hr"]}</span></div>
+            <div><span class="label">STRESS IDX:</span><span id="stress">{hr_data["stress"]}</span></div>
+            <div><span class="label">TIME:</span><span id="ts">{hr_data["ts"]}</span></div>
         </div>
     </div>
 </body>
