@@ -18,6 +18,7 @@ Funzionalità principali:
 
 from flask import Flask, request, jsonify
 from datetime import datetime
+from collections import deque
 import csv
 import os
 
@@ -25,14 +26,14 @@ app = Flask(__name__)
 
 # Dati correnti
 hr_data = {
-    "ts": None,
-    "hr": None,
-    "hr_avg": None,
-    "delta_hr": None,
-    "stress": None,
-    "state": None
+    "ts": "--",
+    "hr": "--",
+    "hr_avg": "--",
+    "delta_hr": "--",
+    "stress": "--",
+    "state": "WAITING"
 }
-hr_list = []
+hr_list = deque(maxlen=60)
 
 # File CSV per log
 LOG_FILE = "biometrics_log.csv"
@@ -53,7 +54,11 @@ def update_hr():
     if not data or 'hr' not in data:
         return jsonify({"error": "HR mancante"}), 400
 
-    hr = int(data['hr'])
+    try:
+        hr = int(data['hr'])
+    except (ValueError, TypeError):
+        return jsonify({"error": "HR deve essere un numero intero"}), 400
+
     raw_ts = data.get('ts')
     if raw_ts:
         try:
@@ -65,8 +70,6 @@ def update_hr():
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     hr_list.append(hr)
-    if len(hr_list) > 60:
-        hr_list.pop(0)
 
     hr_avg = sum(hr_list) / len(hr_list)
     delta_hr = hr - hr_avg
@@ -186,4 +189,4 @@ def index():
 """
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=False)
