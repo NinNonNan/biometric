@@ -23,6 +23,7 @@ import csv
 import subprocess
 import os
 import sys
+import importlib
 
 app = Flask(__name__)
 
@@ -119,20 +120,33 @@ def index():
 # --- Webhook per Auto-Deploy da GitHub ---
 @app.route('/deploy', methods=['POST'])
 def deploy():
-    # Leggiamo la chiave segreta dal file di configurazione locale (ignorato da Git)
+    # Leggiamo la chiave segreta dal file di configurazione locale
     try:
-        from config import DEPLOY_SECRET
-        deploy_secret = DEPLOY_SECRET
-    except (ImportError, AttributeError):
-        return jsonify({"message": "Deployment secret not configured on server (config.py missing or invalid)."}), 500
+        if BASE_DIR not in sys.path:
+            sys.path.append(BASE_DIR)
+        import config
+        importlib.reload(config) # Ricarica il modulo per essere sicuri di leggere l'ultima versione
+        deploy_secret = getattr(config, 'DEPLOY_SECRET', None)
+    except Exception as e:
+        return jsonify({"message": f"Config error: {str(e)}"}), 500
         
     # Prendiamo la chiave segreta inviata da GitHub nella richiesta
     request_secret = request.args.get('secret')
     
+    # Rimuoviamo spazi bianchi accidentali per evitare errori banali
+    if deploy_secret: deploy_secret = str(deploy_secret).strip()
+    if request_secret: request_secret = str(request_secret).strip()
+    
     # Se le chiavi non corrispondono, blocca la richiesta
     if request_secret != deploy_secret:
-        print(f"DEPLOY ERROR: Secret mismatch. Config: '{deploy_secret}' vs Request: '{request_secret}'", file=sys.stderr)
-        return jsonify({"message": "Invalid secret."}), 403
+        # Restituiamo info di debug direttamente nella risposta per capire il problema
+        debug_info = {
+            "expected_len": len(deploy_secret) if deploy_secret else 0,
+            "received_len": len(request_secret) if request_secret else 0,
+            "hint": "Check for trailing spaces in config.py or GitHub webhook URL"
+        }
+        print(f"DEPLOY ERROR: {debug_info}", file=sys.stderr)
+        return jsonify({"message": "Invalid secret.", "debug": debug_info}), 403
 
     # Controlla che sia un evento 'push' sul branch 'main'
     if request.json and request.json.get('ref') == 'refs/heads/main':
