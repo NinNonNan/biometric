@@ -112,6 +112,7 @@ body {
     padding-left: 10px;
     padding-right: 10px;
     min-width: 0;
+    box-sizing: border-box;
 }
 .critical { color:#ff5555; }
 .details {
