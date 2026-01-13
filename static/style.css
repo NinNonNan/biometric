@@ -104,7 +104,7 @@ body {
     gap: 0;
 }
 .chart-container {
-    flex-grow: 1;
+    flex: 1;
     height: 60px;
     position: relative;
     border-left: 2px solid #0c0;
@@ -114,7 +114,6 @@ body {
     min-width: 0;
     box-sizing: border-box;
     overflow: hidden;
-    margin-right: 5px;
 }
 .critical { color:#ff5555; }
 .details {
