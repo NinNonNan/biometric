@@ -20,7 +20,7 @@ body {
     color: #0c0;
     --flicker-color-1: lab(30 -14.66 30.73);
     --flicker-color-2: #75fa69;
-    animation: colorPulse 5s infinite ease-in-out, textflicker 0.01s infinite alternate;
+    animation: colorPulse 5s infinite ease-in-out, textflicker 0.03s infinite alternate; /* 0.01s STANDARD */
     overflow: hidden;
     letter-spacing: 0.125em;
 }
