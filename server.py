@@ -152,7 +152,7 @@ def deploy():
     if request.json and request.json.get('ref') == 'refs/heads/main':
         try:
             # 1. Esegui 'git pull' per scaricare il codice più recente
-            subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
+            subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True, cwd=BASE_DIR)
             
             # 2. "Tocca" il file WSGI per forzare il riavvio del server web
             # !!! IMPORTANTE !!!
