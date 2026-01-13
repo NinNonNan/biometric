@@ -102,14 +102,17 @@ body {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-    gap: 10px;
+    gap: 5px;
 }
 .chart-container {
     flex-grow: 1;
     height: 60px;
     position: relative;
     border-left: 2px solid #0c0;
+    border-right: 2px solid #0c0;
     padding-left: 10px;
+    padding-right: 10px;
+    min-width: 0;
 }
 .critical { color:#ff5555; }
 .details {
