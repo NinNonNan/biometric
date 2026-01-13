@@ -124,7 +124,7 @@ def deploy():
     try:
         if BASE_DIR not in sys.path:
             sys.path.append(BASE_DIR)
-        import config
+        config = importlib.import_module("config")
         importlib.reload(config) # Ricarica il modulo per essere sicuri di leggere l'ultima versione
         deploy_secret = getattr(config, 'DEPLOY_SECRET', None)
     except Exception as e:
