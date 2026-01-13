@@ -32,7 +32,8 @@ hr_data = {
     "hr_avg": "--",
     "delta_hr": "--",
     "stress": "--",
-    "state": "WAITING"
+    "state": "WAITING",
+    "subject": "N/A"
 }
 hr_list = deque(maxlen=60)
 
@@ -42,7 +43,7 @@ LOG_FILE = os.path.join(BASE_DIR, "biometrics_log.csv")
 if not os.path.exists(LOG_FILE):
     with open(LOG_FILE, mode='w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["timestamp","hr","hr_avg","delta_hr","stress","state"])
+        writer.writerow(["timestamp","hr","hr_avg","delta_hr","stress","state","subject"])
 
 # Funzione per limitare i valori tra min e max
 def clamp(value, min_val=0, max_val=100):
@@ -60,6 +61,9 @@ def update_hr():
         hr = int(data['hr'])
     except (ValueError, TypeError):
         return jsonify({"error": "HR deve essere un numero intero"}), 400
+
+    # Legge il soggetto dal payload, altrimenti mantiene l'ultimo conosciuto
+    subject = data.get('subject', hr_data.get('subject', 'N/A'))
 
     raw_ts = data.get('ts')
     if raw_ts:
@@ -90,13 +94,14 @@ def update_hr():
         "hr_avg": round(hr_avg,1),
         "delta_hr": round(delta_hr,1),
         "stress": round(stress,1),
-        "state": state
+        "state": state,
+        "subject": subject
     })
 
     # Scrivi log CSV
     with open(LOG_FILE, mode='a', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow([ts, hr, round(hr_avg,1), round(delta_hr,1), round(stress,1), state])
+        writer.writerow([ts, hr, round(hr_avg,1), round(delta_hr,1), round(stress,1), state, subject])
 
     return jsonify({"status": "ok"}), 200
 

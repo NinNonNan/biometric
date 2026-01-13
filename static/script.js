@@ -16,6 +16,7 @@ function fetchData() {
             document.getElementById('delta').innerText = data.delta_hr;
             document.getElementById('stress').innerText = data.stress;
             document.getElementById('ts').innerText = data.ts;
+            document.getElementById('subject').innerText = data.subject;
         });
 }
 setInterval(fetchData, 1000);

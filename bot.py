@@ -27,7 +27,7 @@ while True:
         current_hr = max(55, min(140, current_hr))
 
         # Prepara i dati da inviare
-        payload = {"hr": current_hr}
+        payload = {"hr": current_hr, "subject": "John Doe"}
 
         # Invia la richiesta POST al server
         response = requests.post(URL, json=payload, timeout=10)
