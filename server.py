@@ -20,6 +20,7 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from collections import deque
 import csv
+import subprocess
 import os
 
 app = Flask(__name__)
@@ -108,6 +109,42 @@ def get_data():
 @app.route('/')
 def index():
     return render_template('index.html', hr_data=hr_data)
+
+# --- Webhook per Auto-Deploy da GitHub ---
+@app.route('/deploy', methods=['POST'])
+def deploy():
+    # Leggiamo la chiave segreta dal file di configurazione locale (ignorato da Git)
+    try:
+        from config import DEPLOY_SECRET
+        deploy_secret = DEPLOY_SECRET
+    except (ImportError, AttributeError):
+        return jsonify({"message": "Deployment secret not configured on server (config.py missing or invalid)."}), 500
+        
+    # Prendiamo la chiave segreta inviata da GitHub nella richiesta
+    request_secret = request.args.get('secret')
+    
+    # Se le chiavi non corrispondono, blocca la richiesta
+    if request_secret != deploy_secret:
+        return jsonify({"message": "Invalid secret."}), 403
+
+    # Controlla che sia un evento 'push' sul branch 'main'
+    if request.json and request.json.get('ref') == 'refs/heads/main':
+        try:
+            # 1. Esegui 'git pull' per scaricare il codice più recente
+            subprocess.run(['git', 'pull'], check=True, capture_output=True, text=True)
+            
+            # 2. "Tocca" il file WSGI per forzare il riavvio del server web
+            # !!! IMPORTANTE !!!
+            # Devi trovare questo percorso nella tua scheda "Web" di PythonAnywhere
+            # e incollarlo qui. Assomiglia a: /var/www/TuoUsername_pythonanywhere_com_wsgi.py
+            wsgi_file_path = '/var/www/NinNonNan_pythonanywhere_com_wsgi.py' # <--- INCOLLA QUI IL TUO PERCORSO
+            os.utime(wsgi_file_path)
+            
+            return jsonify({"message": "Server updated and reloaded successfully."}), 200
+        except subprocess.CalledProcessError as error:
+            return jsonify({"message": f"Git pull failed: {error.stderr}"}), 500
+
+    return jsonify({"message": "Event ignored."}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=False)
