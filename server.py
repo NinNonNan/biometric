@@ -36,7 +36,8 @@ hr_data = {
 hr_list = deque(maxlen=60)
 
 # File CSV per log
-LOG_FILE = "biometrics_log.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, "biometrics_log.csv")
 if not os.path.exists(LOG_FILE):
     with open(LOG_FILE, mode='w', newline='') as f:
         writer = csv.writer(f)
