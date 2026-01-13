@@ -24,7 +24,6 @@ import subprocess
 import os
 import sys
 import importlib
-import traceback
 
 app = Flask(__name__)
 
@@ -116,10 +115,7 @@ def get_data():
 # Route principale: mostra pagina HTML Pip-Boy con dati attuali
 @app.route('/')
 def index():
-    try:
-        return render_template('index.html', hr_data=hr_data)
-    except Exception:
-        return f"<h1>Debug Error Info</h1><pre>{traceback.format_exc()}</pre>", 500
+    return render_template('index.html', hr_data=hr_data)
 
 # --- Webhook per Auto-Deploy da GitHub ---
 @app.route('/deploy', methods=['POST'])
@@ -162,12 +158,12 @@ def deploy():
             # !!! IMPORTANTE !!!
             # Devi trovare questo percorso nella tua scheda "Web" di PythonAnywhere
             # e incollarlo qui. Assomiglia a: /var/www/TuoUsername_pythonanywhere_com_wsgi.py
-            wsgi_file_path = '/var/www/NinNonNan_pythonanywhere_com_wsgi.py' # <--- INCOLLA QUI IL TUO PERCORSO
+            wsgi_file_path = '/var/www/ninnonnan_pythonanywhere_com_wsgi.py' # <--- Percorso corretto (minuscolo)
             os.utime(wsgi_file_path)
             
             return jsonify({"message": "Server updated and reloaded successfully."}), 200
-        except subprocess.CalledProcessError as error:
-            return jsonify({"message": f"Git pull failed: {error.stderr}"}), 500
+        except Exception as e:
+            return jsonify({"message": f"Deploy failed: {str(e)}"}), 500
 
     return jsonify({"message": "Event ignored."}), 200
 
