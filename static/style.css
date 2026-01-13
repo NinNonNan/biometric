@@ -113,6 +113,8 @@ body {
     padding-right: 10px;
     min-width: 0;
     box-sizing: border-box;
+    overflow: hidden;
+    margin-right: 5px;
 }
 .critical { color:#ff5555; }
 .details {
