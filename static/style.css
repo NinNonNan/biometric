@@ -115,6 +115,10 @@ body {
     box-sizing: border-box;
     overflow: hidden;
 }
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
 .critical { color:#ff5555; }
 .details {
     font-size:16px;
