@@ -22,6 +22,7 @@ from collections import deque
 import csv
 import subprocess
 import os
+import sys
 
 app = Flask(__name__)
 
@@ -130,6 +131,7 @@ def deploy():
     
     # Se le chiavi non corrispondono, blocca la richiesta
     if request_secret != deploy_secret:
+        print(f"DEPLOY ERROR: Secret mismatch. Config: '{deploy_secret}' vs Request: '{request_secret}'", file=sys.stderr)
         return jsonify({"message": "Invalid secret."}), 403
 
     # Controlla che sia un evento 'push' sul branch 'main'
