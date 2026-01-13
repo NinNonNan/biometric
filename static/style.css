@@ -92,23 +92,15 @@ body {
     margin-bottom:20px;
 }
 .state {
-    text-align:right;
-    font-size:1.5em;
-    margin-bottom:0;
-    width: 130px; /* Larghezza fissa per contenere "CRITICAL" */
-    flex-shrink: 0;
-}
-.status-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 15px; /* Più spazio tra stato e grafico */
+    text-align:center;
+    font-size:1.2em;
+    margin-bottom:20px;
+    width: 100%;
 }
 .chart-container {
-    width: 150px; /* Larghezza fissa e ridotta */
-    flex: none; /* Impedisce al grafico di allargarsi o stringersi */
-    height: 60px;
+    width: 250px;
+    height: 40px;
+    margin: 0 auto 5px auto;
     position: relative;
     border-left: 2px solid #0c0;
     border-right: 2px solid #0c0;
