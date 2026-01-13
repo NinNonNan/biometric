@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>♥</text></svg>">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="screen">
         <div class="hr-box">
             <span class="heart">♥</span><span id="hr">{{ hr_data.hr }} BPM</span>
         </div>
-        <div id="state" class="state {% if hr_data.state == 'CRITICAL' %}critical{% endif %}">{{ hr_data.state }}</div>
+        <div class="status-row">
+            <div id="state" class="state {% if hr_data.state == 'CRITICAL' %}critical{% endif %}">{{ hr_data.state }}</div>
+            <div class="chart-container"><canvas id="hrChart"></canvas></div>
+        </div>
         <div class="details">
             <div><span class="label">AVG HR:</span><span id="avg">{{ hr_data.hr_avg }}</span></div>
             <div><span class="label">Δ HR:</span><span id="delta">{{ hr_data.delta_hr }}</span></div>

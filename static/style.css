@@ -92,9 +92,24 @@ body {
     margin-bottom:20px;
 }
 .state {
-    text-align:center;
+    text-align:left;
     font-size:1.5em;
-    margin-bottom:20px;
+    margin-bottom:0;
+    min-width: 120px;
+}
+.status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+.chart-container {
+    flex-grow: 1;
+    height: 60px;
+    position: relative;
+    border-left: 2px solid #0c0;
+    padding-left: 10px;
 }
 .critical { color:#ff5555; }
 .details {

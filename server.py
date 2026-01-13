@@ -110,7 +110,9 @@ def update_hr():
 # Route per ottenere i dati correnti (AJAX)
 @app.route('/data')
 def get_data():
-    return jsonify(hr_data)
+    response = hr_data.copy()
+    response['history'] = list(hr_list)
+    return jsonify(response)
 
 # Route principale: mostra pagina HTML Pip-Boy con dati attuali
 @app.route('/')
