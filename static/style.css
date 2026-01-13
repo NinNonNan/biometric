@@ -92,17 +92,16 @@ body {
     margin-bottom:20px;
 }
 .state {
-    text-align:left;
+    text-align:right;
     font-size:1.5em;
     margin-bottom:0;
-    min-width: 120px;
 }
 .status-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-    gap: 5px;
+    gap: 0;
 }
 .chart-container {
     flex-grow: 1;
