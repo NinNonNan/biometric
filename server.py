@@ -24,6 +24,7 @@ import subprocess
 import os
 import sys
 import importlib
+import traceback
 
 app = Flask(__name__)
 
@@ -115,7 +116,10 @@ def get_data():
 # Route principale: mostra pagina HTML Pip-Boy con dati attuali
 @app.route('/')
 def index():
-    return render_template('index.html', hr_data=hr_data)
+    try:
+        return render_template('index.html', hr_data=hr_data)
+    except Exception:
+        return f"<h1>Debug Error Info</h1><pre>{traceback.format_exc()}</pre>", 500
 
 # --- Webhook per Auto-Deploy da GitHub ---
 @app.route('/deploy', methods=['POST'])
