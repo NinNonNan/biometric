@@ -107,6 +107,10 @@ body {
     min-width: 0;
     box-sizing: border-box;
     overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.2);
+    background-image: linear-gradient(transparent 3px, #022 3px),
+                      linear-gradient(to right, transparent 3px, #022 3px);
+    background-size: 4px 4px;
 }
 .chart-container canvas {
     position: absolute;
