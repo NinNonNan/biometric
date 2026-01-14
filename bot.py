@@ -39,5 +39,5 @@ while True:
         print(f"Error sending data: {e}")
 
     # Attende un intervallo casuale prima del prossimo invio
-    sleep_time = random.uniform(2, 5)
+    sleep_time = random.uniform(8, 15) # Aumentato intervallo per ridurre carico CPU sul server
     time.sleep(sleep_time)
