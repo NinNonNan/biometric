@@ -29,7 +29,8 @@ function fetchData() {
     fetch('/data')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('hr').innerText = data.hr + ' BPM';
+            // Suddivide il valore e l'unità in span separati per un controllo preciso dello stile e della spaziatura
+            document.getElementById('hr').innerHTML = `<span class="hr-value">${data.hr}</span><span class="hr-unit">BPM</span>`;
 
             const stateEl = document.getElementById('state');                    
             stateEl.innerText = data.state;

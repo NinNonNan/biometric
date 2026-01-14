@@ -91,6 +91,17 @@ body {
     font-size:54px;
     margin-bottom:20px;
 }
+/* Contenitore per valore HR e unità, per gestire la spaziatura interna */
+#hr {
+    display: flex;
+    align-items: baseline; /* Allinea il numero grande e il testo piccolo alla base */
+    gap: 10px; /* Crea uno spazio di 10px tra il numero e "BPM", uguale al margine del cuore */
+}
+.hr-unit {
+    font-size: 28px; /* Rende l'unità "BPM" più piccola e leggibile */
+    opacity: 0.7;
+    /* La spaziatura è ora gestita dal 'gap' del contenitore #hr */
+}
 .state {
     text-align:center;
     font-size:1.2em;
